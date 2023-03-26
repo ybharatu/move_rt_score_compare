@@ -9,6 +9,8 @@
         background-color: gray;
         margin: 10px;
         display: inline-block;
+        background-size: cover;
+        background-position: center;
       }
 
       .button {
@@ -24,29 +26,7 @@
     <div class="button" id="lowerButton">Lower</div>
     <div class="placeholder" id="placeholder2"></div>
 
-    <script>
-      // Get references to the placeholder elements and buttons
-      const placeholder1 = document.getElementById("placeholder1");
-      const placeholder2 = document.getElementById("placeholder2");
-      const higherButton = document.getElementById("higherButton");
-      const lowerButton = document.getElementById("lowerButton");
-
-      // Set up the image URLs
-      const imageURL1 = "path/to/image1.jpg";
-      const imageURL2 = "path/to/image2.jpg";
-
-      // Set the background images of the placeholders to the image URLs
-      placeholder1.style.backgroundImage = `url(${imageURL1})`;
-      placeholder2.style.backgroundImage = `url(${imageURL2})`;
-
-      // Add event listeners to the buttons
-      higherButton.addEventListener("click", () => {
-        // Code to move the first image higher
-      });
-
-      lowerButton.addEventListener("click", () => {
-        // Code to move the first image lower
-      });
-    </script>
+    <script src="movie_rt_score_compare.js"></script>
   </body>
 </html>
+
