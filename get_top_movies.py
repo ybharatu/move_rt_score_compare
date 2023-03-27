@@ -2,6 +2,7 @@ import argparse
 import requests
 from bs4 import BeautifulSoup
 
+# python3 get_top_movies.py 2022 | tail -n 10 | sed 's/- -//g' | sed 's/[0-9\.]//g'
 def get_top_movies(year):
     url = f'https://www.boxofficemojo.com/year/{year}/'
     response = requests.get(url)
