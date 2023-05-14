@@ -1,6 +1,76 @@
 console.log(apiKey)
 const baseURL = 'https://www.omdbapi.com/';
 
+// Global Variables
+let mov1_idx
+let mov2_idx
+let mov1_score
+let mov2_score
+let cur_selected = 0
+let score = 0
+let all_movies
+
+// Button Connections
+const higherButton = document.querySelector('#higherBtn');
+const lowerButton = document.querySelector('#lowerBtn');
+
+
+
+const higherBtn = () => {
+  update_score(1)
+}
+
+const lowerBtn = () => {
+  update_score(0)
+}
+
+higherButton.addEventListener('click', higherBtn);
+lowerButton.addEventListener('click', lowerBtn);
+
+function update_score(higher) {
+  const score_label = document.getElementById('chain_score');
+  // Can Definately optimize this entire if tree
+  if(higher){
+    if (cur_selected == 0 && mov1_score > mov2_score){
+      score = score + 1
+      score_label.innerHTML = score
+    }
+    else if(cur_selected == 0){
+      score = 0
+      score_label.innerHTML = score
+    }
+    else if (cur_selected == 1 && mov2_score > mov1_score){
+      score = score + 1
+      score_label.innerHTML = score
+    }
+    else {
+      score = 0
+      score_label.innerHTML = score
+    }
+  }
+  else{
+    if (cur_selected == 0 && mov1_score > mov2_score){
+      score = 0
+      score_label.innerHTML = score
+    }
+    else if(cur_selected == 0){
+      score = score + 1
+      score_label.innerHTML = score
+    }
+    else if (cur_selected == 1 && mov2_score > mov1_score){
+      score = 0
+      score_label.innerHTML = score
+    }
+    else {
+      score = score + 1
+      score_label.innerHTML = score
+    }
+  }
+
+
+}
+
+
 const getMovie = (year) => {
   const url = `${baseURL}?apikey=${apiKey}&type=movie&y=${year}&s=*&plot=full`;
   console.log(url)
@@ -85,6 +155,7 @@ async function getMovieData(title) {
 
 const dispMovies = async () => {
 	getMovieList().then(movies => {
+    all_movies = movies
 		mov_len = movies.length - 1
 		const placeholder1 = document.getElementById('placeholder1');
   		const placeholder2 = document.getElementById('placeholder2');
@@ -101,7 +172,8 @@ const dispMovies = async () => {
   		while(rand1 == rand2){
   			rand2 = Math.floor(Math.random() * mov_len);
   		}
-  		
+  		mov1_idx = rand1
+      mov2_idx = rand2
   		// console.log(rand1)
     // 	console.log(movies[rand1])
     // 	console.log(rand2)
@@ -117,6 +189,7 @@ const dispMovies = async () => {
   			//console.log(data.Ratings[1])
   			description1.innerHTML = data.Ratings[1]["Value"]
         rating_int = parseInt(data.Ratings[1]["Value"])
+        mov1_score = rating_int
   			placeholder1.appendChild(image1);
         console.log("Movie 1 Rating:")
         console.log(Math.round( rating_int * 445 / 100 ) - 445 + "px")
@@ -132,10 +205,14 @@ const dispMovies = async () => {
   			placeholder2.innerHTML = '';
   			label2.innerHTML = data.Title;
   			//console.log(data.Ratings[1]["Value"])
-  			description2.innerHTML = data.Ratings[1]["Value"]
+        description2.innerHTML = "";
+  			// description2.innerHTML = data.Ratings[1]["Value"]
         rating_int = parseInt(data.Ratings[1]["Value"])
-        bar2.style.height = Math.round( rating_int * 445 / 100 ) + "px"
-        bar2.style.bottom = Math.round( rating_int * 445 / 100 ) - 445 + "px"
+        mov2_score = rating_int
+        bar2.style.height = "0px"
+        bar2.style.bottom = "-445px"
+     //    bar2.style.height = Math.round( rating_int * 445 / 100 ) + "px"
+     //    bar2.style.bottom = Math.round( rating_int * 445 / 100 ) - 445 + "px"
   			placeholder2.appendChild(image2);
 		});
   		
