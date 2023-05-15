@@ -9,6 +9,17 @@ let mov2_score
 let cur_selected = 0
 let score = 0
 let all_movies
+let all_movies_len
+
+const placeholder1 = document.getElementById('placeholder1');
+const placeholder2 = document.getElementById('placeholder2');
+const label1 = document.getElementById('label1');
+const label2 = document.getElementById('label2');
+const description1 = document.getElementById('description1');
+const description2 = document.getElementById('description2');
+const bar1 = document.getElementById('bar1');
+const bar2 = document.getElementById('bar2');
+const status = document.getElementById('status');
 
 // Button Connections
 const higherButton = document.querySelector('#higherBtn');
@@ -27,47 +38,136 @@ const lowerBtn = () => {
 higherButton.addEventListener('click', higherBtn);
 lowerButton.addEventListener('click', lowerBtn);
 
+function update_movie(cur_movie) {
+  rand = Math.floor(Math.random() * all_movies_len);
+  while(rand == mov1_idx || rand == mov2_idx){
+    rand = Math.floor(Math.random() * mov_len);
+
+  }
+  if(!cur_movie) {
+    getMovieData(all_movies[rand]).then(data => {
+        bar2.style.height = Math.round( mov2_score * 445 / 100 ) + "px"
+        bar2.style.bottom = Math.round( mov2_score * 445 / 100 ) - 445 + "px"
+        description2.innerHTML = mov2_score
+        // 1 second delay
+        // setTimeout(function(){
+        //     console.log("Executed after 10 seconds");
+        // }, 10000);
+        delay(3000).then(() => {
+        console.log('ran after 1 second1 passed');
+        const image1 = generateImage(data.Poster);
+        placeholder1.innerHTML = '';
+        label1.innerHTML = data.Title;
+        description1.innerHTML = ""
+        rating_int = parseInt(data.Ratings[1]["Value"])
+        placeholder1.appendChild(image1);
+        bar1.style.height = "0px"
+        bar1.style.bottom = "445px"
+        status.innerHTML = "Play!"
+        mov1_idx = rand
+        mov1_score = rating_int
+        cur_selected = 1
+      })
+    });
+  }
+  else {
+    getMovieData(all_movies[rand]).then(data => {
+        bar1.style.height = Math.round( mov1_score * 445 / 100 ) + "px"
+        bar1.style.bottom = Math.round( mov1_score * 445 / 100 ) - 445 + "px"
+        description1.innerHTML = mov1_score
+        // 1 second delay
+        // setTimeout(function(){
+        //     console.log("Executed after 10 seconds");
+        delay(3000).then(() => {
+        console.log('ran after 1 second1 passed');
+        const image2 = generateImage(data.Poster);
+        placeholder2.innerHTML = '';
+        label2.innerHTML = data.Title;
+        description2.innerHTML = ""
+        rating_int = parseInt(data.Ratings[1]["Value"])
+        placeholder2.appendChild(image2);
+        // bar1.style.height = Math.round( rating_int * 445 / 100 ) + "px"
+        // bar1.style.bottom = Math.round( rating_int * 445 / 100 ) - 445 + "px"
+        status.innerHTML = "Play!"
+        bar2.style.height = "0px"
+        bar2.style.bottom = "445px"
+        mov2_idx = rand
+        mov2_score = rating_int
+        cur_selected = 0
+      })
+    });
+  }
+}
+
 function update_score(higher) {
   const score_label = document.getElementById('chain_score');
   // Can Definately optimize this entire if tree
   if(higher){
     if (cur_selected == 0 && mov1_score > mov2_score){
+      console.log("CORRECT: " + mov1_score + " is higher than " + mov2_score)
       score = score + 1
       score_label.innerHTML = score
+      status.innerHTML = "CORRECT"
+      update_movie(0)
     }
     else if(cur_selected == 0){
+      console.log("INCORRECT: " + mov2_score + " is higher than " + mov1_score)
       score = 0
       score_label.innerHTML = score
+      status.innerHTML = "INCORRECT"
+      update_movie(0)
     }
     else if (cur_selected == 1 && mov2_score > mov1_score){
+      console.log("CORRECT: " + mov2_score + " is higher than " + mov1_score)
       score = score + 1
       score_label.innerHTML = score
+      status.innerHTML = "CORRECT"
+      update_movie(1)
     }
     else {
+      console.log("INCORRECT: " + mov1_score + " is higher than " + mov2_score)
       score = 0
       score_label.innerHTML = score
+      status.innerHTML = "INCORRECT"
+      update_movie(1)
     }
   }
   else{
-    if (cur_selected == 0 && mov1_score > mov2_score){
-      score = 0
+    if (cur_selected == 0 && mov1_score < mov2_score){
+      console.log("CORRECT: " + mov1_score + " is lower than " + mov2_score)
+      score = score + 1
       score_label.innerHTML = score
+      status.innerHTML = "CORRECT"
+      update_movie(0)
     }
     else if(cur_selected == 0){
-      score = score + 1
-      score_label.innerHTML = score
-    }
-    else if (cur_selected == 1 && mov2_score > mov1_score){
+      console.log("INCORRECT: " + mov2_score + " is lower than " + mov1_score)
       score = 0
       score_label.innerHTML = score
+      status.innerHTML = "INCORRECT"
+      update_movie(0)
     }
-    else {
+    else if (cur_selected == 1 && mov2_score < mov1_score){
+      console.log("CORRECT: " + mov2_score + " is lower than " + mov1_score)
       score = score + 1
       score_label.innerHTML = score
+      status.innerHTML = "CORRECT"
+      update_movie(1)
+    }
+    else {
+      console.log("INCORRECT: " + mov1_score + " is lower than " + mov2_score)
+      score = 0
+      score_label.innerHTML = score
+      status.innerHTML = "INCORRECT"
+      update_movie(1)
     }
   }
 
 
+}
+
+function delay(time) {
+  return new Promise(resolve => setTimeout(resolve, time));
 }
 
 
@@ -156,24 +256,26 @@ async function getMovieData(title) {
 const dispMovies = async () => {
 	getMovieList().then(movies => {
     all_movies = movies
+    all_movies_len = movies.length - 1
+    console.log("ALL MOVIES LEN: " + all_movies_len)
 		mov_len = movies.length - 1
-		const placeholder1 = document.getElementById('placeholder1');
-  		const placeholder2 = document.getElementById('placeholder2');
-  		const label1 = document.getElementById('label1');
-  		const label2 = document.getElementById('label2');
-  		const description1 = document.getElementById('description1');
-  		const description2 = document.getElementById('description2');
-  		const bar1 = document.getElementById('bar1');
-  		const bar2 = document.getElementById('bar2');
+		// const placeholder1 = document.getElementById('placeholder1');
+		// const placeholder2 = document.getElementById('placeholder2');
+		// const label1 = document.getElementById('label1');
+		// const label2 = document.getElementById('label2');
+		// const description1 = document.getElementById('description1');
+		// const description2 = document.getElementById('description2');
+		// const bar1 = document.getElementById('bar1');
+		// const bar2 = document.getElementById('bar2');
 
-  		// Do something with the movies array
-  		rand1 = Math.floor(Math.random() * mov_len);
-  		rand2 = Math.floor(Math.random() * mov_len);
-  		while(rand1 == rand2){
-  			rand2 = Math.floor(Math.random() * mov_len);
-  		}
-  		mov1_idx = rand1
-      mov2_idx = rand2
+		// Do something with the movies array
+		rand1 = Math.floor(Math.random() * mov_len);
+		rand2 = Math.floor(Math.random() * mov_len);
+		while(rand1 == rand2){
+			rand2 = Math.floor(Math.random() * mov_len);
+		}
+		mov1_idx = rand1
+    mov2_idx = rand2
   		// console.log(rand1)
     // 	console.log(movies[rand1])
     // 	console.log(rand2)
