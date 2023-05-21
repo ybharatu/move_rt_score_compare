@@ -1,4 +1,3 @@
-console.log(apiKey)
 const baseURL = 'https://www.omdbapi.com/';
 
 // Global Variables
@@ -56,6 +55,8 @@ function update_movie(cur_movie) {
         delay(3000).then(() => {
         console.log('ran after 1 second1 passed');
         const image1 = generateImage(data.Poster);
+        placeholder2.style.border = "5px solid green"
+        placeholder1.style.border = "0px"
         placeholder1.innerHTML = '';
         label1.innerHTML = data.Title;
         description1.innerHTML = ""
@@ -81,6 +82,8 @@ function update_movie(cur_movie) {
         delay(3000).then(() => {
         console.log('ran after 1 second1 passed');
         const image2 = generateImage(data.Poster);
+        placeholder1.style.border = "5px solid green"
+        placeholder2.style.border = "0px"
         placeholder2.innerHTML = '';
         label2.innerHTML = data.Title;
         description2.innerHTML = ""
@@ -105,6 +108,13 @@ function update_score(higher) {
   if(higher){
     if (cur_selected == 0 && mov1_score > mov2_score){
       console.log("CORRECT: " + mov1_score + " is higher than " + mov2_score)
+      score = score + 1
+      score_label.innerHTML = score
+      status.innerHTML = "CORRECT"
+      update_movie(0)
+    }
+    else if (cur_selected == 0 && mov1_score == mov2_score){
+      console.log("CORRECT: " + mov1_score + " is equal to " + mov2_score)
       score = score + 1
       score_label.innerHTML = score
       status.innerHTML = "CORRECT"
@@ -135,6 +145,13 @@ function update_score(higher) {
   else{
     if (cur_selected == 0 && mov1_score < mov2_score){
       console.log("CORRECT: " + mov1_score + " is lower than " + mov2_score)
+      score = score + 1
+      score_label.innerHTML = score
+      status.innerHTML = "CORRECT"
+      update_movie(0)
+    }
+    else if (cur_selected == 0 && mov1_score == mov2_score){
+      console.log("CORRECT: " + mov1_score + " is equal to " + mov2_score)
       score = score + 1
       score_label.innerHTML = score
       status.innerHTML = "CORRECT"
@@ -298,6 +315,7 @@ const dispMovies = async () => {
         bar1.style.height = Math.round( rating_int * 445 / 100 ) + "px"
         bar1.style.bottom = Math.round( rating_int * 445 / 100 ) - 445 + "px"
         console.log("% value: " + Math.round( rating_int * 445 / 100 ))
+        placeholder1.style.border = "5px solid green"
 		});
 
 		getMovieData(movies[rand2]).then(data => {
