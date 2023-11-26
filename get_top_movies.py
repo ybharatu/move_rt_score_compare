@@ -3,6 +3,7 @@ import requests
 from bs4 import BeautifulSoup
 
 # python3 get_top_movies.py 2022 | tail -n 10 | sed 's/- -//g' | sed 's/[0-9\.]//g' | sed 's/^ //g'
+# python3 get_top_movies.py 2017 | tail -n 10 | sed 's/- -//g' | sed 's/[0-9]*\.//g' | sed 's/^ //g'
 def get_top_movies(year):
     url = f'https://www.boxofficemojo.com/year/{year}/'
     response = requests.get(url)
@@ -28,5 +29,6 @@ movies = get_top_movies(year)
 
 print(f"\nTop 10 movies of {year} based on box office earnings:")
 for i, movie in enumerate(movies):
-    print(f"{i+1}. {movie[0]} - {movie[1]}")
+	print(movie[0])
+    #print(f"{i+1}. {movie[0]} - {movie[1]}")
 
